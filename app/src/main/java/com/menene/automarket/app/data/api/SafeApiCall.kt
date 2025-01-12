@@ -18,7 +18,7 @@ inline fun <D> safeApiCall(apiCall: () -> D): Result<D, String> {
                 val errorBody = throwable.response()?.errorBody()?.string() ?: "Unknown error"
                 Result.Error("Error $code: $errorBody")
             }
-            else -> Result.Error("Unknown s")
+            else -> Result.Error("Unknown ${throwable.message}")
         }
     }
 }

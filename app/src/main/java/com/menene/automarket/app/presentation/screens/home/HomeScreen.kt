@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -18,20 +19,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
 import com.menene.automarket.app.domain.model.Auto
 import com.menene.automarket.app.presentation.model.UiState
+import com.menene.automarket.app.presentation.navigation.Screen
 
 @Composable
 fun HomeScreen(
-    autoViewModel: AutoViewModel = hiltViewModel()
+    navHostController: NavHostController,
+    autoViewModel: AutoViewModel = hiltViewModel(),
 ) {
     val state by autoViewModel.uiState.collectAsStateWithLifecycle()
 
     Column {
         when (state) {
             is UiState.Loading -> LoadingIndicator()
-            is UiState.Success -> AutoList((state as UiState.Success).data)
+            is UiState.Success -> AutoList(
+                (state as UiState.Success).data,
+                navHostController
+            )
             is UiState.Error -> ErrorView((state as UiState.Error).message)
         }
     }
@@ -70,6 +77,7 @@ fun ErrorView(
 @Composable
 fun AutoList(
     autos: List<Auto>,
+    navHostController: NavHostController,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -80,7 +88,7 @@ fun AutoList(
             items = autos,
             key = { it.id }
         ) { auto ->
-            AutoItem(auto)
+            AutoItem(auto = auto, navHostController = navHostController)
             Spacer(modifier = Modifier.height(8.dp))
         }
     }
@@ -89,10 +97,12 @@ fun AutoList(
 @Composable
 fun AutoItem(
     auto: Auto,
+    navHostController: NavHostController,
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
     ) {
         Text(text = auto.id)
         Text(text = auto.brand)
@@ -103,5 +113,12 @@ fun AutoItem(
             model = auto.url,
             contentDescription = null,
         )
+    }
+    Button(
+        onClick = {
+            navHostController.navigate(Screen.AutoDetail(autoId = auto.id.toInt()))
+        }
+    ) {
+        Text(text = "More info")
     }
 }

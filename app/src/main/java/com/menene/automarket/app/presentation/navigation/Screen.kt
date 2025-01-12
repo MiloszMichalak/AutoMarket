@@ -3,7 +3,7 @@ package com.menene.automarket.app.presentation.navigation
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class Screen(){
+sealed class Screen {
     @Serializable
     data object Home : Screen()
 

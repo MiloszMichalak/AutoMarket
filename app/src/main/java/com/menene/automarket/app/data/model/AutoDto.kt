@@ -1,7 +1,7 @@
 package com.menene.automarket.app.data.model
 
 data class AutoDto(
-    val id: String,
+    val id: UInt,
     val brand: String,
     val model: String,
     val year: Short,

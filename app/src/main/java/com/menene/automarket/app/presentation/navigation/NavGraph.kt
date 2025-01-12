@@ -22,14 +22,15 @@ fun MainGraph(
     ) {
         composable<Screen.Home>{
             HomeScreen(
+                navHostController = navController,
                 autoViewModel = autoViewModel
             )
         }
         composable<Screen.AutoDetail>{ backStackEntry ->
-            val autoId = backStackEntry.toRoute<Screen.AutoDetail>().autoId
+            val auto = backStackEntry.toRoute<Screen.AutoDetail>()
             AutoDetailScreen(
-                autoViewModel = autoViewModel,
-                autoId = autoId
+                autoId = auto.autoId,
+                autoViewModel = autoViewModel
             )
         }
     }

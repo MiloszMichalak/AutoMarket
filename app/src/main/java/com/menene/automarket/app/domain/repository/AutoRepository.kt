@@ -5,6 +5,6 @@ import com.menene.automarket.app.domain.model.Auto
 import com.menene.automarket.app.domain.model.AutoFilter
 
 interface AutoRepository {
-    suspend fun getAutos(filter: AutoFilter): Result<List<Auto>, String>
+    suspend fun getAutos(filter: AutoFilter? = null): Result<List<Auto>, String>
     suspend fun getAuto(id: Int): Result<Auto, String>
 }

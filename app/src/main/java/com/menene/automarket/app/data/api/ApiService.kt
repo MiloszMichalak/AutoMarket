@@ -19,5 +19,5 @@ interface ApiService {
     @GET(BuildConfig.BASE_REPOSITORY)
     suspend fun getAuto(
         @Query("id") id: Int
-    ): AutoDto
+    ): List<AutoDto>
 }

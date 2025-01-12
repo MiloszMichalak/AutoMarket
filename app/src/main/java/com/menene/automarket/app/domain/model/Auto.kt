@@ -13,7 +13,7 @@ data class Auto(
 
 fun AutoDto.toDomain(): Auto {
     return Auto(
-        id = this.id,
+        id = this.id.toString(),
         brand = this.brand,
         model = this.model,
         year = this.year.toString(),

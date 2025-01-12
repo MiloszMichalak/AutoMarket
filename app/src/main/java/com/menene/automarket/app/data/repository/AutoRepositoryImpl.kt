@@ -12,22 +12,22 @@ import javax.inject.Inject
 class AutoRepositoryImpl @Inject constructor(
     private val apiService: ApiService
 ): AutoRepository {
-    override suspend fun getAutos(filter: AutoFilter): Result<List<Auto>, String> {
+    override suspend fun getAutos(filter: AutoFilter?): Result<List<Auto>, String> {
         return safeApiCall {
             apiService.getAutos(
-                brand = filter.brand,
-                model = filter.model,
-                minYear = filter.minYear,
-                maxYear = filter.maxYear,
-                minPrice = filter.minPrice,
-                maxPrice = filter.maxPrice
+                brand = filter?.brand,
+                model = filter?.model,
+                minYear = filter?.minYear,
+                maxYear = filter?.maxYear,
+                minPrice = filter?.minPrice,
+                maxPrice = filter?.maxPrice
             ).map { it.toDomain() }
         }
     }
 
     override suspend fun getAuto(id: Int): Result<Auto, String> {
         return safeApiCall {
-            apiService.getAuto(id).toDomain()
+            apiService.getAuto(id).first().toDomain()
         }
     }
 

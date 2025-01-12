@@ -75,6 +75,13 @@ dependencies {
 
     implementation(libs.kotlinx.serialization.json)
 
+// TODO - tests
+//    testImplementation(libs.squareup.mockwebserver)
+//    testImplementation(libs.mockk)
+    testImplementation(libs.truth)
+//    testImplementation(libs.androidx.truth)
+//    testImplementation(libs.kotlinx.coroutines.test)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
