@@ -6,5 +6,6 @@ data class AutoDto(
     val model: String,
     val year: Short,
     val price: UInt,
-    val url: String
+    val course: UInt,
+    val photos: List<PhotoDto>
 )

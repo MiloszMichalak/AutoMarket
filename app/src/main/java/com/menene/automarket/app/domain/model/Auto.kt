@@ -8,7 +8,8 @@ data class Auto(
     val model: String,
     val year: String,
     val price: String,
-    val url: String
+    val course: String,
+    val photos: List<Photo>
 )
 
 fun AutoDto.toDomain(): Auto {
@@ -18,6 +19,7 @@ fun AutoDto.toDomain(): Auto {
         model = this.model,
         year = this.year.toString(),
         price = this.price.toString(),
-        url = this.url
+        course = this.course.toString(),
+        photos = this.photos.map { it.toDomain() }
     )
 }

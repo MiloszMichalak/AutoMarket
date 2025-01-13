@@ -46,9 +46,11 @@ fun AutoDetail(auto: Auto) {
         Text(text = auto.model)
         Text(text = auto.year)
         Text(text = auto.price)
-        AsyncImage(
-            model = auto.url,
-            contentDescription = null,
-        )
+        auto.photos.forEach {
+            AsyncImage(
+                model = it.url,
+                contentDescription = null,
+            )
+        }
     }
 }

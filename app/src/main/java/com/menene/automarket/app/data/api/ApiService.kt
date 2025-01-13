@@ -14,6 +14,8 @@ interface ApiService {
         @Query("maxYear") maxYear: Short? = null,
         @Query("minPrice") minPrice: UInt? = null,
         @Query("maxPrice") maxPrice: UInt? = null,
+        @Query("minCourse") minCourse: UInt? = null,
+        @Query("maxCourse") maxCourse: UInt? = null
     ): List<AutoDto>
 
     @GET(BuildConfig.BASE_REPOSITORY)

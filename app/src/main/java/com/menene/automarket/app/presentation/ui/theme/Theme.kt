@@ -52,6 +52,7 @@ fun AutoMarketTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
-        content = content
+        content = content,
+        shapes = shape
     )
 }
