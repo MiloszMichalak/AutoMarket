@@ -1,4 +1,4 @@
-package com.menene.automarket.app.presentation.screens.home
+package com.menene.automarket.app.presentation.screens
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -6,7 +6,6 @@ import com.menene.automarket.app.domain.model.Auto
 import com.menene.automarket.app.domain.model.AutoFilter
 import com.menene.automarket.app.domain.use_cases.GetAutoUseCase
 import com.menene.automarket.app.domain.use_cases.GetAutosUseCase
-import com.menene.automarket.app.presentation.handleResult
 import com.menene.automarket.app.presentation.model.UiState
 import com.menene.automarket.core.util.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -42,5 +41,18 @@ class AutoViewModel @Inject constructor(
             val result = getAutoUseCase.invoke(id)
             _autoUiState.value = handleResult(result)
         }
+    }
+
+    fun clearAutoUiState(){
+        _autoUiState.value = UiState.Loading
+    }
+}
+
+private fun <T> handleResult(
+    result: Result<T, String>
+): UiState<T> {
+    return when (result) {
+        is Result.Success -> UiState.Success(result.data)
+        is Result.Error -> UiState.Error(result.error)
     }
 }

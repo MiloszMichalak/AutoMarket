@@ -11,8 +11,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.menene.automarket.app.domain.model.Auto
+import com.menene.automarket.app.presentation.common.ErrorView
+import com.menene.automarket.app.presentation.common.LoadingIndicator
 import com.menene.automarket.app.presentation.model.UiState
-import com.menene.automarket.app.presentation.screens.home.AutoViewModel
+import com.menene.automarket.app.presentation.screens.AutoViewModel
 
 @Composable
 fun AutoDetailScreen(
@@ -29,9 +31,9 @@ fun AutoDetailScreen(
         modifier = Modifier.fillMaxSize()
     ) {
         when (autoState) {
-            is UiState.Loading -> Text("Loading...")
+            is UiState.Loading -> LoadingIndicator()
             is UiState.Success -> AutoDetail((autoState as UiState.Success).data)
-            is UiState.Error -> Text((autoState as UiState.Error).message)
+            is UiState.Error -> ErrorView((autoState as UiState.Error).message)
         }
     }
 }

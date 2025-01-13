@@ -1,6 +1,5 @@
 package com.menene.automarket.app.presentation.screens.home
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -9,12 +8,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -22,8 +18,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
 import com.menene.automarket.app.domain.model.Auto
+import com.menene.automarket.app.presentation.common.ErrorView
+import com.menene.automarket.app.presentation.common.LoadingIndicator
 import com.menene.automarket.app.presentation.model.UiState
 import com.menene.automarket.app.presentation.navigation.Screen
+import com.menene.automarket.app.presentation.screens.AutoViewModel
 
 @Composable
 fun HomeScreen(
@@ -37,47 +36,21 @@ fun HomeScreen(
             is UiState.Loading -> LoadingIndicator()
             is UiState.Success -> AutoList(
                 (state as UiState.Success).data,
-                navHostController
+                navHostController,
+                autoViewModel
             )
             is UiState.Error -> ErrorView((state as UiState.Error).message)
         }
     }
 }
 
-@Composable
-fun LoadingIndicator() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        CircularProgressIndicator()
-    }
-}
 
-@Composable
-fun ErrorView(
-    error: String,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "Error: $error",
-            style = MaterialTheme.typography.bodyLarge
-        )
-    }
-}
 
 @Composable
 fun AutoList(
     autos: List<Auto>,
     navHostController: NavHostController,
+    autoViewModel: AutoViewModel,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -88,7 +61,7 @@ fun AutoList(
             items = autos,
             key = { it.id }
         ) { auto ->
-            AutoItem(auto = auto, navHostController = navHostController)
+            AutoItem(auto = auto, navHostController = navHostController, autoViewModel = autoViewModel)
             Spacer(modifier = Modifier.height(8.dp))
         }
     }
@@ -98,7 +71,8 @@ fun AutoList(
 fun AutoItem(
     auto: Auto,
     navHostController: NavHostController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    autoViewModel: AutoViewModel,
 ) {
     Column(
         modifier = modifier
@@ -116,6 +90,7 @@ fun AutoItem(
     }
     Button(
         onClick = {
+            autoViewModel.clearAutoUiState()
             navHostController.navigate(Screen.AutoDetail(autoId = auto.id.toInt()))
         }
     ) {

@@ -7,7 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.menene.automarket.app.presentation.screens.autodetail.AutoDetailScreen
-import com.menene.automarket.app.presentation.screens.home.AutoViewModel
+import com.menene.automarket.app.presentation.screens.AutoViewModel
 import com.menene.automarket.app.presentation.screens.home.HomeScreen
 
 @Composable
