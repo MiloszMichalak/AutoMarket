@@ -12,9 +12,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,6 +50,7 @@ fun HomeScreen(
                 navHostController,
                 autoViewModel
             )
+
             is UiState.Error -> ErrorView((state as UiState.Error).message)
         }
     }
@@ -66,7 +71,11 @@ fun AutoList(
             items = autos,
             key = { it.id }
         ) { auto ->
-            AutoItem(auto = auto, navHostController = navHostController, autoViewModel = autoViewModel)
+            AutoItem(
+                auto = auto,
+                navHostController = navHostController,
+                autoViewModel = autoViewModel
+            )
             Spacer(modifier = Modifier.height(24.dp))
         }
     }
@@ -79,6 +88,15 @@ fun AutoItem(
     modifier: Modifier = Modifier,
     autoViewModel: AutoViewModel,
 ) {
+    val imageList = auto.photos
+    val state = rememberPagerState {
+        imageList.size
+    }
+
+//    LaunchedEffect(Unit) {
+//        state.animateScrollToPage(1)
+//    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -87,17 +105,17 @@ fun AutoItem(
                 navHostController.navigate(Screen.AutoDetail(autoId = auto.id.toInt()))
             }
     ) {
-        Box{
-            Column {
-                auto.photos.forEach {
-                    AsyncImage(
-                        model = it.url,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(MaterialTheme.shapes.medium)
-                    )
-                }
+        Box(modifier = Modifier.fillMaxSize()) {
+            HorizontalPager(
+                state = state,
+            ) { index ->
+                AsyncImage(
+                    model = imageList[index],
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(MaterialTheme.shapes.medium)
+                )
             }
             Text(
                 text = auto.price,
