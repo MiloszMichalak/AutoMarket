@@ -1,8 +1,8 @@
 package com.menene.automarket.app.di
 
 import com.menene.automarket.app.domain.repository.AutoRepository
-import com.menene.automarket.app.domain.use_cases.GetAutoUseCase
-import com.menene.automarket.app.domain.use_cases.GetAutosUseCase
+import com.menene.automarket.app.domain.use_case.GetAutoUseCase
+import com.menene.automarket.app.domain.use_case.GetAutosUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

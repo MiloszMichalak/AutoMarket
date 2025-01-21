@@ -17,9 +17,4 @@ interface ApiService {
         @Query("minCourse") minCourse: UInt? = null,
         @Query("maxCourse") maxCourse: UInt? = null
     ): List<AutoDto>
-
-    @GET(BuildConfig.BASE_REPOSITORY)
-    suspend fun getAuto(
-        @Query("id") id: Int
-    ): List<AutoDto>
 }

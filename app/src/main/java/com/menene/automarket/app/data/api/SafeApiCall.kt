@@ -1,6 +1,6 @@
 package com.menene.automarket.app.data.api
 
-import com.menene.automarket.core.util.Result
+import com.menene.automarket.app.util.Result
 import okio.IOException
 import retrofit2.HttpException
 import java.net.HttpRetryException

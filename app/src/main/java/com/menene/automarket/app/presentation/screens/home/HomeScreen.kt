@@ -8,14 +8,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,30 +26,24 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import coil3.compose.AsyncImage
 import com.menene.automarket.app.domain.model.Auto
-import com.menene.automarket.app.presentation.common.ErrorView
-import com.menene.automarket.app.presentation.common.LoadingIndicator
-import com.menene.automarket.app.presentation.model.UiState
 import com.menene.automarket.app.presentation.navigation.Screen
-import com.menene.automarket.app.presentation.screens.AutoViewModel
+import com.menene.automarket.app.presentation.screens.components.AutoPager
+import com.menene.automarket.app.presentation.screens.components.PageIndicator
 
 @Composable
 fun HomeScreen(
     navHostController: NavHostController,
-    autoViewModel: AutoViewModel = hiltViewModel(),
 ) {
-    val state by autoViewModel.uiState.collectAsStateWithLifecycle()
+    val autoViewModel: AutoViewModel = hiltViewModel()
+    val autos by autoViewModel.autos.collectAsStateWithLifecycle()
 
     Column {
-        when (state) {
-            is UiState.Loading -> LoadingIndicator()
-            is UiState.Success -> AutoList(
-                (state as UiState.Success).data,
-                navHostController,
-                autoViewModel
+        autos?.let {
+            AutoList(
+                autos = it,
+                navHostController = navHostController,
             )
-            is UiState.Error -> ErrorView((state as UiState.Error).message)
         }
     }
 }
@@ -56,17 +53,19 @@ fun HomeScreen(
 fun AutoList(
     autos: List<Auto>,
     navHostController: NavHostController,
-    autoViewModel: AutoViewModel,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
     ) {
-        items(
+        itemsIndexed(
             items = autos,
-            key = { it.id }
-        ) { auto ->
-            AutoItem(auto = auto, navHostController = navHostController, autoViewModel = autoViewModel)
+        ) { index, auto ->
+            AutoItem(
+                auto = auto,
+                key = index,
+                navHostController = navHostController,
+            )
             Spacer(modifier = Modifier.height(24.dp))
         }
     }
@@ -75,30 +74,31 @@ fun AutoList(
 @Composable
 fun AutoItem(
     auto: Auto,
+    key: Int,
     navHostController: NavHostController,
     modifier: Modifier = Modifier,
-    autoViewModel: AutoViewModel,
 ) {
+    val autoSize = auto.photos.size
+    val pagerState = rememberPagerState(pageCount = {
+        autoSize
+    })
+    val coroutineScope = rememberCoroutineScope()
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .clickable {
-                autoViewModel.clearAutoUiState()
-                navHostController.navigate(Screen.AutoDetail(autoId = auto.id.toInt()))
+                navHostController.navigate(Screen.AutoDetail(autoId = key))
             }
     ) {
-        Box{
-            Column {
-                auto.photos.forEach {
-                    AsyncImage(
-                        model = it.url,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(MaterialTheme.shapes.medium)
-                    )
-                }
-            }
+        Box {
+            AutoPager(
+                photos = auto.photos,
+                pagerState = pagerState,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+            )
             Text(
                 text = auto.price,
                 modifier = Modifier
@@ -109,6 +109,11 @@ fun AutoItem(
                 style = MaterialTheme.typography.labelLarge
             )
         }
+        PageIndicator(
+            size = autoSize,
+            pagerState = pagerState,
+            coroutineScope = coroutineScope,
+        )
         Row {
             Text(text = auto.brand + " ")
             Text(text = auto.model)

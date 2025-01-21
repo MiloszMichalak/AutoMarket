@@ -1,4 +1,4 @@
-package com.menene.automarket.core.util
+package com.menene.automarket.app.util
 
 sealed interface Result<out D, out E>{
     class Success<out D>(val data: D): Result<D, Nothing>

@@ -1,56 +1,48 @@
 package com.menene.automarket.app.presentation.screens.autodetail
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.compose.AsyncImage
 import com.menene.automarket.app.domain.model.Auto
-import com.menene.automarket.app.presentation.common.ErrorView
-import com.menene.automarket.app.presentation.common.LoadingIndicator
-import com.menene.automarket.app.presentation.model.UiState
-import com.menene.automarket.app.presentation.screens.AutoViewModel
+import com.menene.automarket.app.presentation.screens.components.AutoPager
+import com.menene.automarket.app.presentation.screens.components.PageIndicator
 
 @Composable
 fun AutoDetailScreen(
-    autoViewModel: AutoViewModel = hiltViewModel(),
     autoId: Int
 ) {
-    val autoState by autoViewModel.autoUiState.collectAsStateWithLifecycle()
-
-    LaunchedEffect(Unit) {
-        autoViewModel.getAuto(autoId)
-    }
+    val autoViewModel: AutoDetailViewModel = hiltViewModel()
+    val auto by autoViewModel.getAuto(autoId).collectAsStateWithLifecycle(initialValue = null)
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        Modifier.height(300.dp)
     ) {
-        when (autoState) {
-            is UiState.Loading -> LoadingIndicator()
-            is UiState.Success -> AutoDetail((autoState as UiState.Success).data)
-            is UiState.Error -> ErrorView((autoState as UiState.Error).message)
-        }
+        auto?.let { AutoDetail(it) }
     }
 }
 
 @Composable
 fun AutoDetail(auto: Auto) {
-    Column {
-        Text(text = auto.id)
-        Text(text = auto.brand)
-        Text(text = auto.model)
-        Text(text = auto.year)
-        Text(text = auto.price)
-        auto.photos.forEach {
-            AsyncImage(
-                model = it.url,
-                contentDescription = null,
-            )
-        }
-    }
+    val listCount = auto.photos.size
+    val coroutineScope = rememberCoroutineScope()
+    val pagerState = rememberPagerState(
+        pageCount = { listCount }
+    )
+    AutoPager(
+        photos = auto.photos,
+        pagerState = pagerState,
+    )
+    PageIndicator(
+        size = listCount,
+        pagerState = pagerState,
+        coroutineScope = coroutineScope,
+    )
+
 }
