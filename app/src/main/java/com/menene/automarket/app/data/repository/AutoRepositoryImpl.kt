@@ -2,34 +2,33 @@ package com.menene.automarket.app.data.repository
 
 import com.menene.automarket.app.data.api.ApiService
 import com.menene.automarket.app.data.api.safeApiCall
-import com.menene.automarket.app.util.Result
 import com.menene.automarket.app.domain.model.Auto
 import com.menene.automarket.app.domain.model.AutoFilter
 import com.menene.automarket.app.domain.model.toDomain
 import com.menene.automarket.app.domain.repository.AutoRepository
 import com.menene.automarket.app.domain.repository.AutoStorage
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
+import com.menene.automarket.app.util.Result
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class AutoRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
     private val autoStorage: AutoStorage
-): AutoRepository {
-    private val scope = CoroutineScope(SupervisorJob())
+) : AutoRepository {
 
-    fun initialize(){
-        scope.launch {
-            when (val result = refresh()){
-                is Result.Success -> autoStorage.saveAutos(result.data)
-                is Result.Error -> Unit
+    override suspend fun refresh(): Result<Unit, String> {
+        when (val result = getAutosFromApi()) {
+            is Result.Success -> {
+                autoStorage.saveAutos(result.data)
+                return Result.Success(Unit)
+            }
+            is Result.Error -> {
+                return Result.Error(result.error)
             }
         }
     }
 
-    suspend fun refresh(filter: AutoFilter? = null): Result<List<Auto>, String>{
+    override suspend fun getAutosFromApi(filter: AutoFilter?): Result<List<Auto>, String> {
         return safeApiCall {
             apiService.getAutos(
                 brand = filter?.brand,
@@ -42,7 +41,7 @@ class AutoRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getAutos(filter: AutoFilter?): Flow<List<Auto>> {
+    override fun getAutos(): Flow<List<Auto>> {
         return autoStorage.getAutos()
     }
 

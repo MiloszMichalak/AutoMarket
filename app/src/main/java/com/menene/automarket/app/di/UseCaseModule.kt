@@ -3,6 +3,7 @@ package com.menene.automarket.app.di
 import com.menene.automarket.app.domain.repository.AutoRepository
 import com.menene.automarket.app.domain.use_case.GetAutoUseCase
 import com.menene.automarket.app.domain.use_case.GetAutosUseCase
+import com.menene.automarket.app.domain.use_case.RefreshAutoListUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,5 +24,11 @@ object UseCaseModule {
     @Singleton
     fun provideGetAutoCase(autoRepository: AutoRepository): GetAutoUseCase {
         return GetAutoUseCase(autoRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRefreshAutoListUseCase(autoRepository: AutoRepository): RefreshAutoListUseCase {
+        return RefreshAutoListUseCase(autoRepository)
     }
 }

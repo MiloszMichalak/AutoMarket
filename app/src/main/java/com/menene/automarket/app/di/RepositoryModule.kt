@@ -21,9 +21,7 @@ object RepositoryModule {
         apiService: ApiService,
         autoStorage: AutoStorage
     ): AutoRepository {
-        return AutoRepositoryImpl(apiService, autoStorage).apply {
-            initialize()
-        }
+        return AutoRepositoryImpl(apiService, autoStorage)
     }
 
     @Provides

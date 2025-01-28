@@ -7,5 +7,5 @@ import javax.inject.Inject
 class GetAutosUseCase @Inject constructor(
     private val autoRepository: AutoRepository
 ) {
-    operator fun invoke(filter: AutoFilter? = null) = autoRepository.getAutos(filter)
+    operator fun invoke() = autoRepository.getAutos()
 }
